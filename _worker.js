@@ -1,23 +1,18 @@
-// <!--GAMFC-->version base on commit 43fad05dcdae3b723c53c226f8181fc5bd47223e, time is 2023-06-22 15:20:02 UTC<!--GAMFC-END-->.
-// @ts-ignore
+// @armanibash
 import { connect } from 'cloudflare:sockets';
 
-// How to generate your own UUID:
-// [Windows] Press "Win + R", input cmd and run:  Powershell -NoExit -Command "[guid]::NewGuid()"
-let userID = '9de966ce-e59e-4dba-b0f8-68115f648bc9';
+let userID = '652da35d-b59d-4ab0-af59-cb90066dcc10';
 
 const proxyIPs = ["[2001:67c:2b0:db32:0:1:681a:404]"]; // ['cdn-all.xn--b6gac.eu.org', 'cdn.xn--b6gac.eu.org', 'cdn-b100.xn--b6gac.eu.org', 'edgetunnel.anycast.eu.org', 'cdn.anycast.eu.org'];
 let proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
 
 let dohURL = 'https://sky.rethinkdns.com/1:-Pf_____9_8A_AMAIgE8kMABVDDmKOHTAKg='; // https://cloudflare-dns.com/dns-query or https://dns.google/dns-query
 
-// v2board api environment variables
 let nodeId = ''; // 1
 
-let apiToken = ''; //abcdefghijklmnopqrstuvwxyz123456
+let apiToken = '';
 
-let apiHost = ''; // api.v2board.com
-
+let apiHost = '';
 if (!isValidUUID(userID)) {
 	throw new Error('uuid is not valid');
 }
@@ -99,8 +94,6 @@ export default {
 						});
 					}
 					default:
-						// return new Response('Not found', { status: 404 });
-						// For any other path, reverse proxy to 'www.fmprc.gov.cn' and return the original response
 						url.hostname = 'www.setareyek.ir';
 						url.protocol = 'https:';
 						request = new Request(url, request);
@@ -126,7 +119,6 @@ export default {
 async function vlessOverWSHandler(request) {
 
 	/** @type {import("@cloudflare/workers-types").WebSocket[]} */
-	// @ts-ignore
 	const webSocketPair = new WebSocketPair();
 	const [client, webSocket] = Object.values(webSocketPair);
 
@@ -148,7 +140,6 @@ async function vlessOverWSHandler(request) {
 	let udpStreamWrite = null;
 	let isDns = false;
 
-	// ws --> remote
 	readableWebSocketStream.pipeTo(new WritableStream({
 		async write(chunk, controller) {
 			if (isDns && udpStreamWrite) {
@@ -189,7 +180,6 @@ async function vlessOverWSHandler(request) {
 					return;
 				}
 			}
-			// ["version", "附加信息长度 N"]
 			const vlessResponseHeader = new Uint8Array([vlessVersion[0], 0]);
 			const rawClientData = chunk.slice(rawDataIndex);
 
@@ -214,7 +204,6 @@ async function vlessOverWSHandler(request) {
 
 	return new Response(null, {
 		status: 101,
-		// @ts-ignore
 		webSocket: client,
 	});
 }
@@ -290,10 +279,6 @@ async function checkUuidInApiResponse(targetUuid) {
 	}
 }
 
-// Usage example:
-//   const targetUuid = "65590e04-a94c-4c59-a1f2-571bce925aad";
-//   checkUuidInApiResponse(targetUuid).then(result => console.log(result));
-
 /**
  * Handles outbound TCP connections.
  *
@@ -358,9 +343,6 @@ function makeReadableWebSocketStream(webSocketServer, earlyDataHeader, log) {
 				controller.enqueue(message);
 			});
 
-			// The event means that the client closed the client -> server stream.
-			// However, the server -> client stream is still open until you call close() on the server side.
-			// The WebSocket protocol says that a separate close message must be sent in each direction to fully close the socket.
 			webSocketServer.addEventListener('close', () => {
 				// client send close, need close server
 				// if stream is cancel, skip controller.close
@@ -386,8 +368,6 @@ function makeReadableWebSocketStream(webSocketServer, earlyDataHeader, log) {
 		},
 
 		pull(controller) {
-			// if ws can stop read if stream is full, we can implement backpressure
-			// https://streams.spec.whatwg.org/#example-rs-push-backpressure
 		},
 		cancel(reason) {
 			// 1. pipe WritableStream has error, this cancel will called, so ws handle server close into here
@@ -406,8 +386,6 @@ function makeReadableWebSocketStream(webSocketServer, earlyDataHeader, log) {
 
 }
 
-// https://xtls.github.io/development/protocols/vless.html
-// https://github.com/zizifn/excalidraw-backup/blob/main/v2ray-protocol.excalidraw
 
 /**
  * 
@@ -474,9 +452,6 @@ async function processVlessHeader(
 		vlessBuffer.slice(addressIndex, addressIndex + 1)
 	);
 
-	// 1--> ipv4  addressLength =4
-	// 2--> domain name addressLength=addressBuffer[1]
-	// 3--> ipv6  addressLength =16
 	const addressType = addressBuffer[0];
 	let addressLength = 0;
 	let addressValueIndex = addressIndex + 1;
