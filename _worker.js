@@ -94,7 +94,7 @@ export default {
 						});
 					}
 					default:
-						url.hostname = 'www.speedtest.net';
+						url.hostname = 'www.setareyek.ir';
 						url.protocol = 'https:';
 						request = new Request(url, request);
 						return await fetch(request);
